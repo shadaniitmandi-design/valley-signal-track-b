@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: valley-signal-track-b
+    runtime: python
+    plan: free
+    buildCommand: >-
+      python -c "import zipfile; zipfile.ZipFile('valley-signal-track-b.zip').extractall('.')"
+      && pip install -r track-b-flood-response/requirements.txt
+    startCommand: cd track-b-flood-response && gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 600 app:app
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.11
+      - key: PYTHONUNBUFFERED
+        value: "1"
